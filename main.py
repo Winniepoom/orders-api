@@ -16,5 +16,5 @@ class Handler(BaseHTTPRequestHandler):
             self.wfile.write(body)
 
 if __name__ == "__main__":
-    HTTPServer(("0.0.0.0", 8080), Handler).serve_forever()
+    HTTPServer(("0.0.0.0", 8088), Handler).serve_forever()
     #1

@@ -21,7 +21,7 @@ pipeline {
         stage('smoke test') {
             steps {
             sh "docker run -d --name smoke-${env.BUILD_NUMBER} ${ECR_URI}/orders-api:${env.IMAGE_TAG}"
-            sh 'SIP=$(docker inspect -f "{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}" smoke-$BUILD_NUMBER); curl -s --retry 5 --retry-delay 1 --retry-connrefused http://$SIP:8080 | grep "Hello from the orders-api!"'
+            sh 'SIP=$(docker inspect -f "{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}" smoke-$BUILD_NUMBER); curl -s --retry 5 --retry-delay 1 --retry-connrefused http://$SIP:8088/healthz | grep "ok"'
             sh "docker rm -f smoke-${env.BUILD_NUMBER}"          
             }
         }

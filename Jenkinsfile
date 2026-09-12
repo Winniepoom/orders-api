@@ -24,7 +24,7 @@ pipeline {
             sh 'SIP=$(docker inspect -f "{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}" smoke-$BUILD_NUMBER); curl -s --retry 5 --retry-delay 1 --retry-connrefused http://$SIP:8080 | grep "Hello from the orders-api!"'
             sh "docker rm -f smoke-${env.BUILD_NUMBER}"          
             }
-        }/*
+        }
         stage('Push') {
             when { branch 'main' }
             steps {
@@ -38,7 +38,7 @@ pipeline {
                 '''
             }
     }
-}
+}/*
         stage('Bump') {
             when { branch 'main' }
             steps {

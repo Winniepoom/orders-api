@@ -42,16 +42,16 @@ pipeline {
                 '''
             }
     }
-}/*
+}
         stage('Bump') {
             when { branch 'main' }
             steps {
-                withCredentials([usernamePassword(credentialsId: 'gitops-write-token',
+                withCredentials([usernamePassword(credentialsId: 'orders-api-gitops-write',
                         usernameVariable: 'GH_USER', passwordVariable: 'GH_TOKEN')]) {
                     sh '''
-                        rm -rf gitops-repo
-                        git clone https://$GH_USER:$GH_TOKEN@github.com/Winniepoom/gitops-repo.git
-                        cd gitops-repo
+                        rm -rf order-api-config
+                        git clone https://$GH_USER:$GH_TOKEN@github.com/Winniepoom/order-api-config.git
+                        cd order-api-config
                         sed -i "s|tag: .*|tag: $IMAGE_TAG|" charts/orders-api/values.yaml
                         git config user.email "jenkins-ci@orders-api.local"
                         git config user.name "jenkins-ci"
@@ -61,6 +61,6 @@ pipeline {
                     '''
                 }
             }
-        }*/
+        }
     }
 }

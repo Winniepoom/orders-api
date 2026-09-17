@@ -20,13 +20,15 @@ pipeline {
         }
         stage('smoke test') {
             steps {
-            sh "docker run -d --name smoke-orders-api-${env.BUILD_NUMBER} ${ECR_URI}/orders-api:${env.IMAGE_TAG}"
-            sh '''
-                set -e
-                SIP=$(docker inspect -f "{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}" smoke-orders-api-${BUILD_NUMBER})
-                curl -s --retry 5 --retry-delay 1 --retry-connrefused "http://${SIP}:8088/healthz" | grep "ok"
-            '''
-            sh "docker rm -f smoke-orders-api-${env.BUILD_NUMBER}"
+                sh "docker run -d --name smoke-orders-api-${env.BUILD_NUMBER} ${ECR_URI}/orders-api:${env.IMAGE_TAG}"
+                sh '''
+                    set -eu
+                    CONTAINER="smoke-orders-api-${BUILD_NUMBER}"
+                    trap 'docker rm -f "$CONTAINER" >/dev/null 2>&1 || true' EXIT
+                    SIP=$(docker inspect -f "{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}" "$CONTAINER")
+                    RESPONSE=$(curl --fail --silent --show-error --retry 5 --retry-delay 1 --retry-connrefused "http://${SIP}:8088/healthz")
+                    test "$RESPONSE" = "ok"
+                '''
             }
         }
         stage('Push') {

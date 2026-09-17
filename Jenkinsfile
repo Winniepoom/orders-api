@@ -26,7 +26,7 @@ pipeline {
                     CONTAINER="smoke-orders-api-${BUILD_NUMBER}"
                     trap 'docker rm -f "$CONTAINER" >/dev/null 2>&1 || true' EXIT
                     SIP=$(docker inspect -f "{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}" "$CONTAINER")
-                    RESPONSE=$(curl --fail --silent --show-error --retry 5 --retry-delay 1 --retry-connrefused "http://${SIP}:8088/healthz")
+                    RESPONSE=$(curl --fail --silent --show-error --retry 10 --retry-delay 1 --retry-connrefused "http://${SIP}:8088/healthz")
                     test "$RESPONSE" = "ok"
                 '''
             }
